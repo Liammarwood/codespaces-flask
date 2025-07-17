@@ -9,23 +9,10 @@
         li { padding: 5px 0; }
         .done { text-decoration: line-through; color: gray; }
     </style>
+      <link href="/static/fontawesome/css/all.css" rel="stylesheet" />
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-</head>
-<body>
-    <h1>ToDo List</h1>
-
-    <div class="input-group mb-3">
-        <input class="form-control" type="text" id="new-task" placeholder="Enter a new task">
-        <span class="input-group-text button" id="basic-addon2">
-            <button class="btn btn-outline-secondary border-0" type="button" onclick="addTodo()" >
-                Save
-    </button>
-        </span>
-    </div>
-
-    <ul id="todo-list"></ul>
-
-    <script>
+     <script>
         async function fetchTodos() {
             const res = await fetch('/todos');
             const todos = await res.json();
@@ -33,14 +20,17 @@
             list.innerHTML = '';
             todos.forEach(todo => {
                 const li = document.createElement('li');
-                li.className = todo.done ? 'done' : '';
+                commonClassnames = "list-group-item d-flex justify-content-between align-items-center"
+                li.className = todo.done ? commonClassnames + ' done' : commonClassnames;
                 li.innerHTML = `
                     <input type="checkbox" ${todo.done ? 'checked' : ''} onclick="toggleDone(${todo.id})">
-                    ${todo.task}
-                    <button onclick="deleteTodo(${todo.id})">Delete</button>
+                    <p>${todo.task}</p>
+                    <span onclick="deleteTodo(${todo.id})" class="badge text-bg-primary rounded-pill"><i class="fa-solid fa-trash"></i></span>
                 `;
                 list.appendChild(li);
             });
+            const totalTasks = document.getElementById("total-tasks")
+            totalTasks.innerText = todos.length
         }
 
         async function addTodo() {
@@ -68,5 +58,26 @@
 
         fetchTodos();
     </script>
+</head>
+<body>
+    <div class="container mt-4">
+        <form>
+            <legend>ToDo List</legend>
+
+            <div class="input-group mb-3">
+                <input class="form-control" type="text" id="new-task" placeholder="Enter a new task">
+                <span class="input-group-text button" id="basic-addon2">
+                    <button class="btn btn-outline-secondary border-0" type="button" onclick="addTodo()" >
+                        Save
+                    </button>
+                </span>
+            </div>
+        </form>
+
+        <label>Total Tasks: <span id="total-tasks">0</span></label>
+        <ul class="list-group" id="todo-list"></ul>
+    </div>
+
+   
 </body>
 </html>
